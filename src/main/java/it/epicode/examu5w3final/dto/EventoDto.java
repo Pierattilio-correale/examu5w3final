@@ -22,5 +22,6 @@ public class EventoDto {
     @NotNull(message = "devi segnalare quanti posti totali possiede!")
     private int postiTotali;
 
+    private int userId;
 
 }

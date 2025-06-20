@@ -2,6 +2,7 @@ package it.epicode.examu5w3final.service;
 
 import it.epicode.examu5w3final.dto.PrenotazioneDto;
 import it.epicode.examu5w3final.exception.NotFoundException;
+import it.epicode.examu5w3final.exception.UnauthoraizedException;
 import it.epicode.examu5w3final.model.Evento;
 import it.epicode.examu5w3final.model.Prenotazione;
 import it.epicode.examu5w3final.model.User;
@@ -29,15 +30,37 @@ public class PrenotazioneService {
     private EventoService eventoService;
 
     public Prenotazione savePrenotazione(PrenotazioneDto prenotazioneDto) throws NotFoundException {
-        User user = userRepository.findById(prenotazioneDto.getUserId()).orElseThrow(()->new NotFoundException("l'utente non è stato trovato"));
-        Evento evento = eventoRepository.findById(prenotazioneDto.getEventoId()).orElseThrow(()->new NotFoundException("l'evento non è stato trovato"));
+        User user = userRepository.findById(prenotazioneDto.getUserId())
+                .orElseThrow(() -> new NotFoundException("L'utente non è stato trovato"));
+
+        Evento evento = eventoRepository.findById(prenotazioneDto.getEventoId())
+                .orElseThrow(() -> new NotFoundException("L'evento non è stato trovato"));
+
+
+        if (evento.getPostiDisponibili() <= 0) {
+            throw new IllegalStateException("Non ci sono posti disponibili per questo evento.");
+        }
+
+
+        boolean giaPrenotato = evento.getPrenotazioni().stream()
+                .anyMatch(p -> p.getUtente().getId() == user.getId());
+
+        if (giaPrenotato) {
+            throw new IllegalStateException("Hai già prenotato questo evento.");
+        }
+
+
         Prenotazione prenotazione = new Prenotazione();
         prenotazione.setEvento(evento);
         prenotazione.setUtente(user);
 
+
+        evento.setPostiDisponibili(evento.getPostiDisponibili() - 1);
+        eventoRepository.save(evento);
+
         return prenotazioneRepository.save(prenotazione);
     }
-    public List<Prenotazione>getListaPrenotazioni(PrenotazioneDto prenotazioneDto){
+    public List<Prenotazione>getListaPrenotazioni(){
         return prenotazioneRepository.findAll();
     }
 
@@ -62,8 +85,18 @@ public class PrenotazioneService {
 
     }
 
-    public void DeletePrenotazione(int id) throws NotFoundException {
-        Prenotazione prenotazioneDaCancellare = getPrenotazione(id);
-        prenotazioneRepository.delete(prenotazioneDaCancellare);
+    public void deletePrenotazione(int prenotazioneId, int userId) throws NotFoundException {
+        Prenotazione prenotazione = prenotazioneRepository.findById(prenotazioneId)
+                .orElseThrow(() -> new NotFoundException("Prenotazione non trovata"));
+
+        if (prenotazione.getUtente().getId() != userId) {
+            throw new UnauthoraizedException("Non puoi annullare prenotazioni altrui");
+        }
+
+        Evento evento = prenotazione.getEvento();
+        evento.setPostiDisponibili(evento.getPostiDisponibili() + 1);
+        eventoRepository.save(evento);
+
+        prenotazioneRepository.delete(prenotazione);
     }
 }

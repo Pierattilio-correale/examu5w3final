@@ -1,7 +1,9 @@
 package it.epicode.examu5w3final.service;
 
 import it.epicode.examu5w3final.dto.EventoDto;
+import it.epicode.examu5w3final.enumerated.Role;
 import it.epicode.examu5w3final.exception.NotFoundException;
+import it.epicode.examu5w3final.exception.UnauthoraizedException;
 import it.epicode.examu5w3final.model.Evento;
 import it.epicode.examu5w3final.model.User;
 import it.epicode.examu5w3final.repository.EventoRepository;
@@ -47,6 +49,12 @@ return eventoRepository.save(evento);
 
         if (eventoDto.getPostiTotali() < prenotati) {
             throw new IllegalArgumentException("Non puoi impostare un numero di posti totali inferiore alle prenotazioni già effettuate (" + prenotati + ")");
+        }
+        User user = userService.getUser(eventoDto.getUserId());
+
+
+        if (eventoDaAggiornare.getCreatore().getId() != user.getId()) {
+            throw new UnauthoraizedException("Non puoi modificare eventi non tuoi");
         }
         eventoDaAggiornare.setLuogo(eventoDto.getLuogo());
         eventoDaAggiornare.setData(eventoDto.getData());

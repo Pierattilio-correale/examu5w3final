@@ -1,5 +1,6 @@
 package it.epicode.examu5w3final.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,6 +26,7 @@ public class Evento {
         @JoinColumn(name = "creatore_id")
         private User creatore;
 
+        @JsonIgnore
         @OneToMany(mappedBy = "evento")
     private List<Prenotazione>prenotazioni;
     }

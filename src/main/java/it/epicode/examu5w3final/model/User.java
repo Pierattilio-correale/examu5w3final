@@ -1,5 +1,6 @@
 package it.epicode.examu5w3final.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.epicode.examu5w3final.enumerated.Role;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -30,9 +31,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "creatore")
     private List<Evento> creati;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "utente")
     private List<Prenotazione>prenotazioni;
 

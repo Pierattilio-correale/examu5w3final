@@ -3,7 +3,7 @@ package it.epicode.examu5w3final.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
+//
 import java.time.LocalDateTime;
 @Data
 public class EventoDto {

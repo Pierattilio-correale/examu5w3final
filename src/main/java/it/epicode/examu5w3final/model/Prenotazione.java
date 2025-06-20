@@ -2,7 +2,7 @@ package it.epicode.examu5w3final.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
+//
 @Data
 @Entity
 public class Prenotazione {

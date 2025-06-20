@@ -3,7 +3,7 @@ package it.epicode.examu5w3final.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-
+//
 @Data
 public class UserDto {
     @NotEmpty(message = "l' username non può essere nullo o vuoto!")

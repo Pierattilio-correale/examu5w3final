@@ -20,7 +20,7 @@ public class EventoController {
     private EventoService eventoService;
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ORGANIZZATORE')")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE')")
     public Evento creaEvento(@RequestBody  @Validated EventoDto eventoDto , BindingResult bindingResult) throws ValidationException, NotFoundException {
         if(bindingResult.hasErrors()){
             throw new ValidationException(bindingResult.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage()).reduce("",(e, s)->s+e));
@@ -30,14 +30,16 @@ public class EventoController {
 
     }
     @GetMapping("")
+
    public List<Evento>  getListaEventi(){
         return  eventoService.getListaEventi();
    }
     @GetMapping("/{id}")
+
     public Evento getEvento(@PathVariable  int id) throws NotFoundException {
         return eventoService.getEvento(id);
     }
-    @PreAuthorize("hasRole('ORGANIZZATORE')")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE')")
     @PutMapping("/{id}")
     public Evento aggiornaEvento(@PathVariable int id , @RequestBody @Validated EventoDto eventoDto, BindingResult bindingResult) throws ValidationException, NotFoundException {
         if(bindingResult.hasErrors()){
@@ -48,7 +50,7 @@ public class EventoController {
 
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ORGANIZZATORE')")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE')")
     public void deleteEvento(@PathVariable int id ) throws NotFoundException {
         eventoService.deleteEvento(id);
     }

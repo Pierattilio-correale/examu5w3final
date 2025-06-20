@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@PreAuthorize("hasAnyAuthority('ORGANIZZATORE,'USER','ADMIN')")
 @RequestMapping("/prenotazioni")
 public class PrenotazioneController {
     @Autowired
